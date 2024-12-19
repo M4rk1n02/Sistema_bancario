@@ -25,6 +25,14 @@ public class Cliente implements Serializable{
         }
         return true;
 	}
+	
+	public static boolean validarNome(String nome) {
+        if (nome.length() <= 3 || nome == null) {
+            System.out.println("nome nao pode ser nulo e deve conter mais de 3 caracteres");
+            return false;  
+        }
+        return true;
+	}
 	 	
 	public void adicionarConta(ContaBancaria c) {
 		if(contas.contains(c)) {
@@ -45,12 +53,10 @@ public class Cliente implements Serializable{
 	}
 	
 	public ContaBancaria localizarContaPorNumero(Integer numero) {
-		ContaBancaria temp = new ContaBancaria(numero);
-		
-		if(contas.contains(temp)) {
-			int index = contas.indexOf(temp);
-			temp = contas.get(index);
-			return temp;
+		for(ContaBancaria conta : contas) {
+			if(conta.getNumeroConta().equals(numero)){
+				return conta;
+			}
 		}
 		return null;
 	}

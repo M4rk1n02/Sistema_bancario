@@ -108,7 +108,7 @@ public class ContaBancaria implements Serializable {
     }
 
     public void transferir(ContaBancaria c, float quantia) {
-        if (status && c.isStatus()) {
+    	if (status && c.isStatus()) {
             if (quantia <= 0) {
                 System.err.println("Valor inválido para transferência.");
             } else if (quantia <= saldo) {

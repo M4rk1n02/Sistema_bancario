@@ -17,7 +17,8 @@ public class Programa {
         System.out.println("Bem-vindo ao sistema bancário!");
 
         while (continuar) {
-            try {
+    
+        	try {
             	System.out.println(" ____________________________________ ");
             	System.out.println("|                                    |");
                 System.out.println("|           Menu Principal           |");
@@ -40,7 +41,8 @@ public class Programa {
                     case 3 -> listarClientes(persistencia);
                     case 4 -> consultarClientePorCpf(persistencia, scanner); 
                     case 5 -> removerCliente(persistencia, scanner);
-                    case 6 -> continuar = false;
+                    case 6 -> {System.out.println("saindo...");
+                    	continuar = false;}
                     default -> System.out.println("Opção inválida. Por favor, escolha uma opção valida: \n");
                 }
             } catch (InputMismatchException e) {
@@ -56,10 +58,10 @@ public class Programa {
         scanner.nextLine(); 
         System.out.print("Insira o CPF: ");
         String cpf = scanner.nextLine();
+        System.out.print("Insira o nome: ");
+        String nome = scanner.nextLine();
         
-        if(Cliente.validarCPF(cpf) == true) {
-            System.out.print("Insira o nome: ");
-            String nome = scanner.nextLine();
+        if(Cliente.validarCPF(cpf) && Cliente.validarNome(nome) ) {
             persistencia.adicionarCliente(new Cliente(cpf, nome));
         }
     }
@@ -89,8 +91,7 @@ public class Programa {
 //-------------------------------------------------------------------------------------------------------------------------------//    
     private static void consultarClientePorCpf(PersistenciaCliente persistencia, Scanner scanner) {
     	scanner.nextLine();
-        System.out.print( "Digite o CPF do cliente que deseja consultar: " );
-        
+        System.out.print( "Digite o CPF do cliente que deseja consultar: " );        
         String cpf = scanner.nextLine();
         Cliente cliente = persistencia.localizarClientePorCpf(cpf);
         
@@ -167,6 +168,7 @@ public class Programa {
         System.out.print("Digite o número da conta: ");
        	int numeroConta = scanner.nextInt();       	
        	ContaBancaria conta = cliente.localizarContaPorNumero(numeroConta);
+       	
        	if (conta != null) {
        		System.out.print("Digite o valor do depósito: \n");
        		float valor = scanner.nextFloat();
@@ -181,6 +183,7 @@ public class Programa {
         System.out.print("Digite o número da conta: "); 
         int numeroConta = scanner.nextInt();
         ContaBancaria conta = cliente.localizarContaPorNumero(numeroConta);
+        
         if (conta != null) {
         	System.out.print("Digite o valor do saque: ");
         	float valor = scanner.nextFloat();
@@ -196,6 +199,7 @@ public class Programa {
         int numeroContaOrigem = scanner.nextInt();
         System.out.print("Digite o número da conta de destino: ");
         int numeroContaDestino = scanner.nextInt();
+        
         
         ContaBancaria contaOrigem = cliente.localizarContaPorNumero(numeroContaOrigem);
         ContaBancaria contaDestino = cliente.localizarContaPorNumero(numeroContaDestino);
@@ -214,10 +218,17 @@ public class Programa {
         System.out.print("Digite o número da conta: "); 
         int numeroConta = scanner.nextInt();
         ContaBancaria conta = cliente.localizarContaPorNumero(numeroConta);
-        System.out.println("O saldo da conta " + conta.getNumeroConta() + " é de :" +  conta.getSaldo());
+        
+        if(conta != null) {
+        	System.out.println("O saldo da conta " + conta.getNumeroConta() + " é de :" +  conta.getSaldo());
+        }else {
+        	System.out.println("conta nao encontrada");
+        	return;
+        }
+        
    }
     
-    
+//-------------------------------------------------------------------------------------------------------------------------------//    
     private static void saldoContaTotal(Cliente cliente, Scanner scanner) {
     	 float saldoTotal = 0;
     	    for (ContaBancaria conta : cliente.getContas()) {
@@ -226,6 +237,7 @@ public class Programa {
     	    System.out.println("Saldo total de todas as contas de: " + saldoTotal);
     }
     
+//-------------------------------------------------------------------------------------------------------------------------------//    
     private static void removerConta(Cliente cliente, Scanner scanner) {
     	 System.out.print("Digite o número da conta: "); 
          int numeroConta = scanner.nextInt();
