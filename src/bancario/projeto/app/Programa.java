@@ -2,6 +2,8 @@ package bancario.projeto.app;
 
 import bancario.projeto.model.Cliente;
 import bancario.projeto.model.ContaBancaria;
+import bancario.projeto.model.ContaCorrente;
+import bancario.projeto.model.ContaPoupanca;
 import bancario.projeto.persistencia.PersistenciaCliente;
 
 import java.util.InputMismatchException;
@@ -51,8 +53,7 @@ public class Programa {
             }
         }
     }
-    
-    
+        
 //-------------------------------------------------------------------------------------------------------------------------------// 
     private static void cadastrarCliente(PersistenciaCliente persistencia, Scanner scanner) {
         scanner.nextLine(); 
@@ -65,7 +66,6 @@ public class Programa {
             persistencia.adicionarCliente(new Cliente(cpf, nome));
         }
     }
-    
     
 //-------------------------------------------------------------------------------------------------------------------------------//    
     private static void removerCliente(PersistenciaCliente persistencia, Scanner scanner) {
@@ -81,12 +81,10 @@ public class Programa {
         }
     }
     
-    
 //-------------------------------------------------------------------------------------------------------------------------------//   
     private static void listarClientes(PersistenciaCliente persistencia) {
         persistencia.listarClientes();   
-    }
-    
+    } 
     
 //-------------------------------------------------------------------------------------------------------------------------------//    
     private static void consultarClientePorCpf(PersistenciaCliente persistencia, Scanner scanner) {
@@ -105,7 +103,6 @@ public class Programa {
         }
         
     }
-
 
 //-------------------------------------------------------------------------------------------------------------------------------//
     private static void opcoesDeCliente(PersistenciaCliente persistencia, Scanner scanner) {
@@ -142,10 +139,7 @@ public class Programa {
                 int opcao = scanner.nextInt();
 
                 switch (opcao) {
-	                case 1 -> {
-	                    ContaBancaria novaConta = new ContaBancaria(cliente.getContas().size() + 1);
-	                    persistencia.adicionarContaAoCliente(cpf, novaConta);
-	                }                    
+                	case 1 -> novaConta(cliente, persistencia, scanner);               
 	                case 2 -> depositarSaldo(cliente, scanner);
                     case 3 -> saqueSaldo(cliente, scanner);
                     case 4 -> transferirSaldo(persistencia, cliente, scanner);
@@ -162,7 +156,23 @@ public class Programa {
             }
         }
     }
-
+    
+//-------------------------------------------------------------------------------------------------------------------------------//
+    private static void novaConta(Cliente cliente, PersistenciaCliente persistencia, Scanner scanner) {
+    	System.out.println("Digite o tipo de conta (1 para Corrente, 2 para Poupança): ");
+        int tipo = scanner.nextInt();
+        
+        ContaBancaria novaConta;
+        if (tipo == 1) {
+            novaConta = new ContaCorrente(cliente.getContas().size() + 1); 
+        } else {
+            novaConta = new ContaPoupanca(cliente.getContas().size() + 1);
+        }
+        
+        persistencia.adicionarContaAoCliente(cliente.getCpf(), novaConta);
+        novaConta.exibirTipo(); 
+    }
+    
 //-------------------------------------------------------------------------------------------------------------------------------//
     private static void depositarSaldo(Cliente cliente, Scanner scanner) {
         System.out.print("Digite o número da conta: ");
@@ -266,17 +276,5 @@ public class Programa {
          ContaBancaria conta = cliente.localizarContaPorNumero(numeroConta);
          cliente.removerConta(conta);
     }
-//-------------------------------------------------------------------------------------------------------------------------------//
-    
-    
-// Função para apagar um cliente individualmente
-//    private static boolean removerClienteIndividual(Cliente cliente, PersistenciaCliente persistencia) {
-//        if (cliente != null) {
-//            persistencia.removerCliente(cliente);
-//            return true;
-//        } else {
-//            return false; 
-//        }
-//    }
     
 }

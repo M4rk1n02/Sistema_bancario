@@ -19,7 +19,7 @@ public class ContaBancaria implements Serializable {
         this.dataAbertura = LocalDateTime.now().format(DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss"));
         this.status = true;
     }
-    
+      
 //-------------------------------------------------------------------------------------------------------------------------------//
     
     public Integer getNumeroConta() {
@@ -72,8 +72,11 @@ public class ContaBancaria implements Serializable {
     
     @Override
 	public String toString() {
-		return " Numero da conta=(" + numeroConta + ")\n   Saldo=(" + saldo + ")\n   Data de Abertura=(" + dataAbertura + ")\n   status=(" + status+ ") \n";
+		return "\n Numero da conta=(" + numeroConta + ")\n   Saldo=(" + saldo + ")\n   Data de Abertura=(" + dataAbertura + ")\n   status=(" + status+ ") \n";
 	}
+
+    public void exibirTipo() {
+   	} 
     
 //-------------------------------------------------------------------------------------------------------------------------------//
     
@@ -95,7 +98,7 @@ public class ContaBancaria implements Serializable {
             if (quantia > 0) {
                 if (this.saldo >= quantia) {
                     this.saldo -= quantia;
-                    System.out.println("Saque realizado com sucesso!");
+                    System.out.println("Saque realizado com sucesso.");
                 } else {
                     System.err.println("Saldo insuficiente.");
                 }
@@ -107,25 +110,37 @@ public class ContaBancaria implements Serializable {
         }
     }
 
-    public boolean transferir(ContaBancaria c, float quantia) {
-    	if (status && c.isStatus()) {
-            if (quantia <= 0) {
-                System.err.println("Valor inválido para transferência.");
-                return false;
-            } else if (quantia <= saldo) {
-                this.saldo -= quantia;
-                c.saldo += quantia;
-//                System.out.println("Transferência realizada com sucesso.");
+    public boolean transferir(ContaBancaria contaDestino, float valor) {
+        if (this.saldo >= valor) {
+            float tarifa = calcularTarifaTransferencia(valor);
+            float valorComTarifa = valor + tarifa; 
+
+            if (this.saldo >= valorComTarifa) {
+                this.saldo -= valorComTarifa;
+                contaDestino.saldo += valor;
+                System.out.println("Tarifa aplicada: R$" + tarifa);
                 return true;
             } else {
-//                System.err.println("Saldo insuficiente para realizar a transferência.");
+                System.out.println("Saldo insuficiente para cobrir a tarifa.");
                 return false;
             }
         } else {
-//            System.err.println("Operação não pode ser realizada entre contas desativadas.");
+            System.out.println("Saldo insuficiente para a transferência.");
             return false;
         }
     }
+    
+    public float calcularTarifaTransferencia(float quantia) {
+        float tarifa = 0.0f;
+        if (this instanceof ContaCorrente) {
+            tarifa = quantia * 0.01f;
+        } else if (this instanceof ContaPoupanca) {
+            tarifa = quantia * 0.005f;
+        }
+        System.out.println("Tarifa de transferência: " + tarifa);
+        return tarifa;
+    }
+    
     
     public void saldoTotal(ContaBancaria c, float quantia) {    	
     	 if (status && c.isStatus()) {
@@ -134,4 +149,5 @@ public class ContaBancaria implements Serializable {
     	        System.out.println("Operação não pode ser realizada entre contas desativadas.");
     	 }
     }
+    
 }
