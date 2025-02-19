@@ -96,7 +96,7 @@ public class Programa {
         Cliente cliente = persistencia.localizarClientePorCpf(cpf);
         
         if (cliente != null) {
-        	System.out.println(" ____________________________________"+ "\n\n"+     					   	
+        	System.out.println(" Nome: " + cliente.getNome()         + "\n\n"+     					   	
         					   " Nome: " + cliente.getNome()         + "\n"  +
         					   " CPF: " + cliente.getCpf()           + "\n"  +
         					   " ____________________________________");
@@ -148,7 +148,7 @@ public class Programa {
 	                }                    
 	                case 2 -> depositarSaldo(cliente, scanner);
                     case 3 -> saqueSaldo(cliente, scanner);
-                    case 4 -> transferirSaldo(cliente, scanner);
+                    case 4 -> transferirSaldo(persistencia, cliente, scanner);
                     case 5 -> saldoConta(cliente, scanner);
                     case 6 -> saldoContaTotal(cliente, scanner);
                     case 7 -> System.out.println(cliente.getContas());
@@ -194,23 +194,45 @@ public class Programa {
     }
 
 //-------------------------------------------------------------------------------------------------------------------------------//
-    private static void transferirSaldo(Cliente cliente, Scanner scanner) {
-        System.out.print("Digite o número da sua conta: ");
-        int numeroContaOrigem = scanner.nextInt();
-        System.out.print("Digite o número da conta de destino: ");
-        int numeroContaDestino = scanner.nextInt();
-        
-        
-        ContaBancaria contaOrigem = cliente.localizarContaPorNumero(numeroContaOrigem);
-        ContaBancaria contaDestino = cliente.localizarContaPorNumero(numeroContaDestino);
-        
-        if (contaOrigem != null && contaDestino != null) {
-        	System.out.print("Digite o valor da transferência: ");
-        	float valor = scanner.nextFloat();
-        	contaOrigem.transferir(contaDestino, valor);
-        } else {
-        	System.out.println("Conta(s) não encontrada(s).");
-        }
+    private static void transferirSaldo(PersistenciaCliente persistencia, Cliente cliente, Scanner scanner) {
+    	   	    
+    	    System.out.print("Digite o número da conta de origem: " + "\n");
+    	    int numeroContaOrigem = scanner.nextInt();
+    	    ContaBancaria contaOrigem = cliente.localizarContaPorNumero(numeroContaOrigem);
+    	    
+    	    if(contaOrigem == null) {
+    	    	System.out.println("Conta não encontrada!");
+    	    	return;
+    	    }
+    	    
+    	    scanner.nextLine();
+    	    
+    	    System.out.print("Digite o CPF do cliente que receberá o dinheiro: " + "\n");
+    	    String cpfDestino = scanner.nextLine();
+    	    Cliente clienteDestinoTransferencia = persistencia.localizarClientePorCpf(cpfDestino);
+    	    
+    	    if(clienteDestinoTransferencia == null) {
+    	    	System.out.println("Cliente não encontrado!");
+    	    	return;
+    	    }
+    	    
+    	    System.out.print("Digite o número da conta de destino: " + "\n");
+    	    int numeroContaDestino = scanner.nextInt();
+    	    ContaBancaria contaDestino = clienteDestinoTransferencia.localizarContaPorNumero(numeroContaDestino);
+    	    
+    	    if(contaDestino == null) {
+    	    	System.out.println("Conta não encontrada!");
+    	    	return;
+    	    }
+    	    
+    	    System.out.print("Digite o valor da transferência: " + "\n");
+    	    float valor = scanner.nextFloat();
+    	    
+    	    if (contaOrigem.transferir(contaDestino, valor)) {
+    	        System.out.println("Transferência realizada com sucesso!");
+    	    } else {
+    	        System.out.println("Saldo insuficiente ou erro na transferência.");
+    	    }
     }
     
 //-------------------------------------------------------------------------------------------------------------------------------//    
@@ -244,7 +266,8 @@ public class Programa {
          ContaBancaria conta = cliente.localizarContaPorNumero(numeroConta);
          cliente.removerConta(conta);
     }
-   
+//-------------------------------------------------------------------------------------------------------------------------------//
+    
     
 // Função para apagar um cliente individualmente
 //    private static boolean removerClienteIndividual(Cliente cliente, PersistenciaCliente persistencia) {

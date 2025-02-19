@@ -107,19 +107,23 @@ public class ContaBancaria implements Serializable {
         }
     }
 
-    public void transferir(ContaBancaria c, float quantia) {
+    public boolean transferir(ContaBancaria c, float quantia) {
     	if (status && c.isStatus()) {
             if (quantia <= 0) {
                 System.err.println("Valor inválido para transferência.");
+                return false;
             } else if (quantia <= saldo) {
                 this.saldo -= quantia;
                 c.saldo += quantia;
-                System.out.println("Transferência realizada com sucesso.");
+//                System.out.println("Transferência realizada com sucesso.");
+                return true;
             } else {
-                System.err.println("Saldo insuficiente para realizar a transferência.");
+//                System.err.println("Saldo insuficiente para realizar a transferência.");
+                return false;
             }
         } else {
-            System.err.println("Operação não pode ser realizada entre contas desativadas.");
+//            System.err.println("Operação não pode ser realizada entre contas desativadas.");
+            return false;
         }
     }
     
