@@ -88,13 +88,13 @@ public class ContaBancaria implements Serializable {
         if (status) {
             if (quantia > 0) {
                 this.saldo += quantia;
-                System.out.println("Depósito realizado com sucesso.");
-                registrarTransacao("Depósito", quantia);
+                System.out.println("Deposito realizado com sucesso.");
+                registrarTransacao("Deposito", quantia);
             } else {
-                System.err.println("Valor inválido para depósito.");
+                System.err.println("Valor invalido para deposito.");
             }
         } else {
-            System.err.println("Operação não permitida. Conta desativada.");
+            System.err.println("Operacao nao permitida. Conta desativada.");
         }
     }
 
@@ -125,13 +125,14 @@ public class ContaBancaria implements Serializable {
                 this.saldo -= valorComTarifa;
                 contaDestino.saldo += valor;
                 System.out.println("Tarifa aplicada: R$" + tarifa);
+                registrarTransacao("Transferencia", valorComTarifa);
                 return true;
             } else {
                 System.out.println("Saldo insuficiente para cobrir a tarifa.");
                 return false;
             }
         } else {
-            System.out.println("Saldo insuficiente para a transferência.");
+            System.out.println("Saldo insuficiente para a transferencia.");
             return false;
         }
     }
@@ -151,7 +152,7 @@ public class ContaBancaria implements Serializable {
         System.out.println("______________________________________");
 
         if (transacoes.isEmpty()) {
-            System.out.println("Nenhuma movimentação encontrada.");
+            System.out.println("Nenhuma movimentacao encontrada.");
         } else {
             transacoes.forEach(System.out::println);
         }
@@ -166,7 +167,7 @@ public class ContaBancaria implements Serializable {
         } else if (this instanceof ContaPoupanca) {
             tarifa = quantia * 0.005f;
         }
-        System.out.println("Tarifa de transferência: " + tarifa);
+        System.out.println("Tarifa de transferencia: " + tarifa);
         return tarifa;
     }
     
@@ -175,7 +176,7 @@ public class ContaBancaria implements Serializable {
     	 if (status && c.isStatus()) {
     		 saldo += quantia;
     	 } else {
-    	        System.out.println("Operação não pode ser realizada entre contas desativadas.");
+    	        System.out.println("Operacao nao pode ser realizada entre contas desativadas.");
     	 }
     }
     

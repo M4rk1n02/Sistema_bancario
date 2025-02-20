@@ -1,5 +1,7 @@
 package bancario.projeto.persistencia;
 
+import bancario.projeto.exception.ClienteNaoEncontradoException;
+import bancario.projeto.exception.ContaNaoEncontradaException;
 import bancario.projeto.model.Cliente;
 import bancario.projeto.model.ContaBancaria;
 
@@ -20,7 +22,7 @@ public class PersistenciaCliente {
 
     public void adicionarCliente(Cliente c) {
         if (clientes.contains(c)) {
-            System.out.println("Cliente já cadastrado!");
+            System.out.println("Cliente ja cadastrado.");
         } else {
             clientes.add(c);
             salvarClientes();
@@ -34,17 +36,17 @@ public class PersistenciaCliente {
             salvarClientes();
             System.out.println("Cliente removido com sucesso!");
         } else {
-            System.out.println("Cliente não encontrado.");
+            System.out.println("Cliente nao encontrado.");
         }
     }
 
-    public Cliente localizarClientePorCpf(String cpf) {
+    public Cliente localizarClientePorCpf(String cpf) throws ClienteNaoEncontradoException {
         for (Cliente cliente : clientes) {
             if (cliente.getCpf().equals(cpf)) {
                 return cliente;
             }
         }
-        return null;
+        throw new ClienteNaoEncontradoException("Cliente com CPF " + cpf + " n�o foi encontrado.");
     }
 
     public void atualizarCliente(Cliente c) {
@@ -54,7 +56,7 @@ public class PersistenciaCliente {
             salvarClientes();
             System.out.println("Cliente atualizado com sucesso!");
         } else {
-            System.out.println("Cliente não encontrado.");
+            System.out.println("Cliente nao encontrado.");
         }
     }
 
@@ -74,17 +76,17 @@ public class PersistenciaCliente {
     
 //-------------------------------------------------------------------------------------------------------------------------------//
     
-    public void adicionarContaAoCliente(String cpf, ContaBancaria conta) {
+    public void adicionarContaAoCliente(String cpf, ContaBancaria conta) throws ClienteNaoEncontradoException {
         Cliente cliente = localizarClientePorCpf(cpf);
         if (cliente != null) {
             cliente.adicionarConta(conta);
             atualizarCliente(cliente); 
         } else {
-            System.out.println("Cliente não encontrado.");
+        	throw new ClienteNaoEncontradoException("Cliente nao encontrado.");
         }
     }
     
-    public void removerContaDoCliente(String cpf, int numeroConta) {
+    public void removerContaDoCliente(String cpf, int numeroConta) throws ClienteNaoEncontradoException, ContaNaoEncontradaException {
         Cliente cliente = localizarClientePorCpf(cpf);
         if (cliente != null) {
             ContaBancaria conta = cliente.localizarContaPorNumero(numeroConta);
@@ -92,20 +94,20 @@ public class PersistenciaCliente {
                 cliente.removerConta(conta);
                 atualizarCliente(cliente); 
             } else {
-                System.out.println("Conta não encontrada.");
+            	throw new ContaNaoEncontradaException("Conta nao encontrada.");
             }
         } else {
-            System.out.println("Cliente não encontrado.");
+            throw new ClienteNaoEncontradoException("Cliente nao encontrado.");
         }
     }
 
-    public void atualizarContaDoCliente(String cpf, ContaBancaria contaAtualizada) {
+    public void atualizarContaDoCliente(String cpf, ContaBancaria contaAtualizada) throws ClienteNaoEncontradoException {
         Cliente cliente = localizarClientePorCpf(cpf);
         if (cliente != null) {
             cliente.atualizarConta(contaAtualizada);
             atualizarCliente(cliente); 
         } else {
-            System.out.println("Cliente não encontrado.");
+        	throw new ClienteNaoEncontradoException("Cliente nao encontrado.");
         }
     }
     
@@ -122,7 +124,7 @@ public class PersistenciaCliente {
         try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream(arquivo_cliente))) {
             return (ArrayList<Cliente>) ois.readObject();
         } catch (FileNotFoundException e) {
-            System.out.println("Arquivo de clientes não encontrado. Criando uma nova lista.");
+            System.out.println("Arquivo de clientes nao encontrado. Criando uma nova lista.");
         } catch (IOException | ClassNotFoundException e) {
             System.err.println("Erro ao carregar clientes: " + e.getMessage());
         }

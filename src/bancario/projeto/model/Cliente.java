@@ -4,6 +4,8 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Objects;
 
+import bancario.projeto.exception.ContaNaoEncontradaException;
+
 public class Cliente implements Serializable{
 	private static final long serialVersionUID = 1L;
 	
@@ -28,7 +30,7 @@ public class Cliente implements Serializable{
 	
 	public static boolean validarNome(String nome) {
         if (nome.length() <= 3 || nome == null) {
-            System.out.println("nome nao pode ser nulo e deve conter mais de 3 caracteres");
+            System.out.println("Nome nao pode ser nulo e deve conter mais de 3 caracteres");
             return false;  
         }
         return true;
@@ -36,7 +38,7 @@ public class Cliente implements Serializable{
 	 	
 	public void adicionarConta(ContaBancaria c) {
 		if(contas.contains(c)) {
-			System.out.println("Conta jÃ¡ cadastrada!");
+			System.out.println("Conta ja cadastrada!");
 		} else {
 			contas.add(c);
 			System.out.println("Conta cadastrada com sucesso!");
@@ -52,14 +54,15 @@ public class Cliente implements Serializable{
 		}
 	}
 	
-	public ContaBancaria localizarContaPorNumero(Integer numero) {
-		for(ContaBancaria conta : contas) {
-			if(conta.getNumeroConta().equals(numero)){
-				return conta;
-			}
-		}
-		return null;
+	public ContaBancaria localizarContaPorNumero(int numeroConta) throws ContaNaoEncontradaException {
+	    for (ContaBancaria conta : contas) {
+	        if (conta.getNumeroConta() == numeroConta) {
+	            return conta;
+	        }
+	    }
+	    throw new ContaNaoEncontradaException("Conta com número " + numeroConta + " não foi encontrada.");
 	}
+
 	
 	public void atualizarConta(ContaBancaria c) {
 		if(contas.contains(c)) {

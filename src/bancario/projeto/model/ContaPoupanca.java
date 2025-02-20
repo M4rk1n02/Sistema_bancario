@@ -18,6 +18,6 @@ public class ContaPoupanca extends ContaBancaria {
 	}
 	
 	public float calcularTarifaTransferencia(float quantia) {
-        return quantia * 0.005f; 
+        return quantia * 0.015f; 
     }
 }

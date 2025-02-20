@@ -1,9 +1,12 @@
 package bancario.projeto.model;
 
+import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
-public class RegistroTransacao {
+public class RegistroTransacao implements Serializable{
+	private static final long serialVersionUID = 1L;
+	
     private String tipo;        
     private float valor;        
     private LocalDateTime data; 
