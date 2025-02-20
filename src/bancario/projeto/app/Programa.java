@@ -132,8 +132,9 @@ public class Programa {
                 System.out.println("|5 -> Saldo de uma conta             |");
                 System.out.println("|6 -> Saldo total das Contas         |");
                 System.out.println("|7 -> Listar Contas                  |");
-                System.out.println("|8 -> Remover Conta                  |");
-                System.out.println("|9 -> Voltar ao Menu Principal       |");
+                System.out.println("|8 -> Imprimir Extrato               |");
+                System.out.println("|9 -> Remover Conta                  |");
+                System.out.println("|10 -> Voltar ao Menu Principal      |");
                 System.out.println("|____________________________________|");
                        
                 int opcao = scanner.nextInt();
@@ -146,8 +147,9 @@ public class Programa {
                     case 5 -> saldoConta(cliente, scanner);
                     case 6 -> saldoContaTotal(cliente, scanner);
                     case 7 -> System.out.println(cliente.getContas());
-                    case 8 -> removerConta(cliente, scanner);
-                    case 9 -> voltar = true;
+                    case 8 -> imprimirExtrato(cliente,scanner);
+                    case 9 -> removerConta(cliente, scanner);
+                    case 10 -> voltar = true;
                     default -> System.out.println("Opção inválida. \n");
                 }
             } catch (InputMismatchException e) {
@@ -262,19 +264,36 @@ public class Programa {
     
 //-------------------------------------------------------------------------------------------------------------------------------//    
     private static void saldoContaTotal(Cliente cliente, Scanner scanner) {
-    	 float saldoTotal = 0;
+    	float saldoTotal = 0;
     	    for (ContaBancaria conta : cliente.getContas()) {
     	        saldoTotal += conta.getSaldo(); 
     	    }
     	    System.out.println("Saldo total de todas as contas de: " + saldoTotal);
     }
     
+//-------------------------------------------------------------------------------------------------------------------------------//        
+    private static void imprimirExtrato(Cliente cliente, Scanner scanner) {
+        System.out.println("Digite o número da conta para ver o extrato:");
+        int numeroConta = scanner.nextInt();
+
+        ContaBancaria conta = cliente.getContas().stream()
+                .filter(c -> c.getNumeroConta().equals(numeroConta))
+                .findFirst()
+                .orElse(null);
+
+        if (conta == null) {
+            System.out.println("Conta não encontrada.");
+            return;
+        }
+
+        conta.imprimirExtrato();
+    }
+
 //-------------------------------------------------------------------------------------------------------------------------------//    
     private static void removerConta(Cliente cliente, Scanner scanner) {
     	 System.out.print("Digite o número da conta: "); 
          int numeroConta = scanner.nextInt();
          ContaBancaria conta = cliente.localizarContaPorNumero(numeroConta);
          cliente.removerConta(conta);
-    }
-    
+    }    
 }

@@ -3,6 +3,8 @@ package bancario.projeto.model;
 import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
 public class ContaBancaria implements Serializable {
@@ -12,14 +14,16 @@ public class ContaBancaria implements Serializable {
     private float saldo;
     private String dataAbertura; //Não tava salvando no .dat como datetime, tive que passar como string para converter com o formatter;
     private boolean status;
+    private List<RegistroTransacao> transacoes;
 
     public ContaBancaria(Integer numero) {
         this.numeroConta = numero;
         this.saldo = 0f;
         this.dataAbertura = LocalDateTime.now().format(DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss"));
         this.status = true;
+        this.transacoes = new ArrayList<>();
     }
-      
+          
 //-------------------------------------------------------------------------------------------------------------------------------//
     
     public Integer getNumeroConta() {
@@ -85,6 +89,7 @@ public class ContaBancaria implements Serializable {
             if (quantia > 0) {
                 this.saldo += quantia;
                 System.out.println("Depósito realizado com sucesso.");
+                registrarTransacao("Depósito", quantia);
             } else {
                 System.err.println("Valor inválido para depósito.");
             }
@@ -99,6 +104,7 @@ public class ContaBancaria implements Serializable {
                 if (this.saldo >= quantia) {
                     this.saldo -= quantia;
                     System.out.println("Saque realizado com sucesso.");
+                    registrarTransacao("Saque", quantia);
                 } else {
                     System.err.println("Saldo insuficiente.");
                 }
@@ -128,6 +134,29 @@ public class ContaBancaria implements Serializable {
             System.out.println("Saldo insuficiente para a transferência.");
             return false;
         }
+    }
+    
+    public void registrarTransacao(String tipo, float valor) {
+        if (transacoes == null) {
+            transacoes = new ArrayList<>();
+        }
+        RegistroTransacao transacao = new RegistroTransacao(tipo, valor, LocalDateTime.now());
+        transacoes.add(transacao);
+    }
+
+    
+    public void imprimirExtrato() {
+    	
+        System.out.println("Extrato da conta " + numeroConta);
+        System.out.println("______________________________________");
+
+        if (transacoes.isEmpty()) {
+            System.out.println("Nenhuma movimentação encontrada.");
+        } else {
+            transacoes.forEach(System.out::println);
+        }
+        
+        System.out.println("______________________________________");
     }
     
     public float calcularTarifaTransferencia(float quantia) {
